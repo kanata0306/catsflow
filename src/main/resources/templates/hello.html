@@ -12,6 +12,10 @@
     入力: <input type="text" name="text1"/>
     <input type="submit" value="クリック"/>
 </form>
-
+<br>
+<form method="post" action="/hello/db">
+    従業員ID:<input type="text" name="text2" th:value="${text2_value}"/>
+    <input type="submit" value="クリック"/>
+</form>
 </body>
 </html>
