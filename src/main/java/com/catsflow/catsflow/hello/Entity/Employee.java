@@ -1,4 +1,4 @@
-package com.catsflow.catsflow.hello;
+package com.catsflow.catsflow.hello.Entity;
 
 import lombok.Data;
 
