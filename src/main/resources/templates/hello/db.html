@@ -6,18 +6,19 @@
 </head>
 <body>
     <h1>HelloResponseDB</h1>
-    <table>
+
+    <table border="1">
         <tr>
             <th>ID</th>
-            <td th:text="${employee.employeeId}"></td>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Memo</th>
         </tr>
-        <tr>
-            <th>Name</th>
-            <td th:text="${employee.employeeName}"></td>
-        </tr>
-        <tr>
-            <th>Age</th>
-            <td th:text="${employee.employeeAge}"></td>
+        <tr th:each="tx : ${transactions}">
+            <td th:text="${tx['ID']}"></td>
+            <td th:text="${tx['AMOUNT']}"></td>
+            <td th:text="${tx['TYPE']}"></td>
+            <td th:text="${tx['MEMO']}"></td>
         </tr>
     </table>
 </body>

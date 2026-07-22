@@ -2,13 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>ResponseSample</title>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <h1>HelloResponseDB</h1>
 
-<p th:text="${sample}"></p>
+    <div th:if="${transactions != null and !#lists.isEmpty(transactions)}">
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Memo</th>
+            </tr>
+            <tr th:each="tx : ${transactions}">
+                <td th:text="${tx['ID']}"></td>
+                <td th:text="${tx['AMOUNT']}"></td>
+                <td th:text="${tx['TYPE']}"></td>
+                <td th:text="${tx['MEMO']}"></td>
+            </tr>
+        </table>
+    </div>
 
+    <p th:unless="${transactions != null and !#lists.isEmpty(transactions)}">
+        該当データがありません。
+    </p>
 </body>
 </html>
