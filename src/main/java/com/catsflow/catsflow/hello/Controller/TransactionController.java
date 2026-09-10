@@ -1,20 +1,23 @@
-package com.catsflow.catsflow.hello;
+package com.catsflow.catsflow.hello.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.catsflow.catsflow.hello.Servise.TransactionService;
+
 import java.util.List;
 import java.util.Map;
 
 @Controller
-public class HelloController {
+public class TransactionController {
 
-    private final HelloService service;
+    private final TransactionService service;
 
-    public HelloController(HelloService helloService) {
-        this.service = helloService;
+    public TransactionController(TransactionService transactionService) {
+        this.service = transactionService;
     }
 
     @GetMapping("/hello")

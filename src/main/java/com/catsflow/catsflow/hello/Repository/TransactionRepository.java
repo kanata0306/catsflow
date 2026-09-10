@@ -7,11 +7,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class HelloRepository {
+public class TransactionRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public HelloRepository(JdbcTemplate jdbcTemplate) {
+    public TransactionRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
