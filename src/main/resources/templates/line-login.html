@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Catsflow ログイン</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        :root { color-scheme: light; font-family: "Yu Gothic UI", "Meiryo", sans-serif; color: #24312d; background: #f1f5f2; }
+        * { box-sizing: border-box; }
+        body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; }
+        main { width: min(100%, 420px); background: #fff; border: 1px solid #dce5df; border-radius: 8px; padding: 28px; }
+        h1 { margin: 0 0 8px; font-size: 24px; }
+        p { color: #58665f; line-height: 1.6; }
+        label { display: block; margin: 16px 0 6px; font-size: 14px; font-weight: 600; }
+        input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #b9c7bf; border-radius: 4px; font: inherit; }
+        button { width: 100%; min-height: 46px; margin-top: 20px; border: 0; border-radius: 4px; background: #177653; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+        button:disabled { opacity: .55; cursor: wait; }
+        .switch { margin-top: 12px; background: transparent; color: #176748; border: 1px solid #177653; }
+        #status { min-height: 24px; margin-bottom: 0; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Catsflow</h1>
+    <p id="intro">LINEアカウントを確認しています。</p>
+    <form id="auth-form" class="hidden">
+        <div id="name-field" class="hidden">
+            <label for="name">名前</label>
+            <input id="name" name="name" autocomplete="name" maxlength="100">
+        </div>
+        <label for="email">メールアドレス</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+        <label for="password">パスワード（12文字以上）</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="72" required>
+        <button id="submit" type="submit">ログインしてLINEと連携</button>
+        <button id="mode" class="switch" type="button">新しいアカウントを作成</button>
+    </form>
+    <p id="status" role="status" aria-live="polite"></p>
+</main>
+<script>
+    const form = document.querySelector("#auth-form");
+    const nameField = document.querySelector("#name-field");
+    const nameInput = document.querySelector("#name");
+    const passwordInput = document.querySelector("#password");
+    const modeButton = document.querySelector("#mode");
+    const submitButton = document.querySelector("#submit");
+    const intro = document.querySelector("#intro");
+    const status = document.querySelector("#status");
+    let registering = false;
+    let idToken = "";
+
+    function setMode(register) {
+        registering = register;
+        nameField.classList.toggle("hidden", !register);
+        nameInput.required = register;
+        passwordInput.autocomplete = register ? "new-password" : "current-password";
+        submitButton.textContent = register ? "登録してLINEと連携" : "ログインしてLINEと連携";
+        modeButton.textContent = register ? "既存アカウントでログイン" : "新しいアカウントを作成";
+    }
+
+    modeButton.addEventListener("click", () => setMode(!registering));
+
+    async function start() {
+        const config = await fetch("/api/line/config").then(response => response.json());
+        if (!config.liffId) throw new Error("LIFF IDが設定されていません。管理者に連絡してください。");
+        await liff.init({ liffId: config.liffId });
+        if (!liff.isLoggedIn()) {
+            liff.login({ redirectUri: window.location.href });
+            return;
+        }
+        idToken = liff.getIDToken();
+        if (!idToken) throw new Error("LINE認証を取得できませんでした。LIFFのopenid権限を確認してください。");
+        intro.textContent = "Catsflowアカウントでログインするか、新規登録してください。";
+        form.classList.remove("hidden");
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        submitButton.disabled = true;
+        status.textContent = "確認中...";
+        try {
+            const response = await fetch("/api/line/authenticate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    idToken,
+                    email: document.querySelector("#email").value,
+                    password: passwordInput.value,
+                    name: nameInput.value
+                })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || "認証できませんでした。");
+            form.classList.add("hidden");
+            intro.textContent = "連携できました。LINEのトークへ戻って『今月』と送ってください。";
+            status.textContent = result.message;
+        } catch (error) {
+            status.textContent = error.message;
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+
+    start().catch(error => { intro.textContent = error.message; });
+</script>
+</body>
+</html>

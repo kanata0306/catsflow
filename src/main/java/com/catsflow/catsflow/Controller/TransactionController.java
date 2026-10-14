@@ -1,4 +1,4 @@
-package com.catsflow.catsflow.hello.Controller;
+package com.catsflow.catsflow.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.catsflow.catsflow.hello.Servise.TransactionService;
+import com.catsflow.catsflow.Service.TransactionService;
 
 import java.util.List;
 import java.util.Map;

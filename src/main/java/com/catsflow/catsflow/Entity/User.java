@@ -1,9 +1,11 @@
-package com.catsflow.catsflow.hello.Entity;
+package com.catsflow.catsflow.Entity;
 
 import lombok.Data;
 
 @Data
 public class User {
+    private Long id;
     private String name;
     private String email;
+    private String passwordHash;
 }

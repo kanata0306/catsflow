@@ -1,10 +1,10 @@
-package com.catsflow.catsflow.hello.Servise;
+package com.catsflow.catsflow.Service;
 
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 
-import com.catsflow.catsflow.hello.Repository.TransactionRepository;
+import com.catsflow.catsflow.Repository.TransactionRepository;
 
 @Service
 public class TransactionService {

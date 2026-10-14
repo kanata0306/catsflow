@@ -1,4 +1,4 @@
-package com.catsflow.catsflow.hello.Entity;
+package com.catsflow.catsflow.Entity;
 
 import lombok.Data;
 import java.time.LocalDateTime;
