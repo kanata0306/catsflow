@@ -31,7 +31,8 @@ public class TransactionRepository {
         String query = "SELECT t.*, c.name AS category_name "
                 + "FROM transactions t "
                 + "LEFT JOIN categories c ON c.id = t.category_id "
-                + "WHERE t.user_id = ? AND t.transaction_date >= ? AND t.transaction_date <= ?";
+                + "WHERE t.user_id = ? AND t.transaction_date >= ? AND t.transaction_date <= ? "
+                + "AND t.is_transfer = FALSE AND t.is_calculation_target = TRUE";
 
         return jdbcTemplate.queryForList(query, userId, Date.valueOf(startDate), Date.valueOf(endDate));
     }

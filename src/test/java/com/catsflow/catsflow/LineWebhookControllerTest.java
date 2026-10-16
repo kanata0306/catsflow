@@ -33,7 +33,7 @@ class LineWebhookControllerTest {
     }
 
     private LineWebhookController controller() {
-        LineWebhookController controller = new LineWebhookController(null, null, null, new ObjectMapper());
+        LineWebhookController controller = new LineWebhookController(null, null, null, null, new ObjectMapper());
         ReflectionTestUtils.setField(controller, "channelSecret", SECRET);
         return controller;
     }

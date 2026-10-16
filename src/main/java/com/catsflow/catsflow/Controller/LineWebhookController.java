@@ -1,6 +1,7 @@
 package com.catsflow.catsflow.Controller;
 
 import com.catsflow.catsflow.Entity.LineUserLink;
+import com.catsflow.catsflow.Service.BudgetService;
 import com.catsflow.catsflow.Service.LineUserLinkService;
 import com.catsflow.catsflow.Service.TransactionSummaryService;
 import com.catsflow.catsflow.Service.WebhookEventService;
@@ -39,6 +40,7 @@ public class LineWebhookController {
 
     private final LineUserLinkService lineUserLinkService;
     private final TransactionSummaryService transactionSummaryService;
+    private final BudgetService budgetService;
     private final WebhookEventService webhookEventService;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate = new RestTemplate();
@@ -54,10 +56,12 @@ public class LineWebhookController {
 
     public LineWebhookController(LineUserLinkService lineUserLinkService,
             TransactionSummaryService transactionSummaryService,
+            BudgetService budgetService,
             WebhookEventService webhookEventService,
             ObjectMapper objectMapper) {
         this.lineUserLinkService = lineUserLinkService;
         this.transactionSummaryService = transactionSummaryService;
+        this.budgetService = budgetService;
         this.webhookEventService = webhookEventService;
         this.objectMapper = objectMapper;
     }
@@ -158,7 +162,14 @@ public class LineWebhookController {
         }
 
         if ("予算".equals(normalized)) {
-            return "予算データはまだ未設定です。Mini Appで予算を登録してください。";
+            var budgetStatus = budgetService.getCurrentMonthBudgetStatus(userId);
+            if (budgetStatus == null) {
+                return "今月の予算はまだ設定されていません。Mini Appで予算を登録してください。";
+            }
+            return "今月の予算: " + formatMoney(budgetStatus.budgetAmount())
+                    + "\n使用額: " + formatMoney(budgetStatus.spentAmount())
+                    + "\n残額: " + formatMoney(budgetStatus.remaining())
+                    + "\n使用率: " + budgetStatus.usageRate() + "%";
         }
 
         return "利用可能なコマンドは\n今月\n予算\nカテゴリ別\nです。";
