@@ -291,7 +291,7 @@ public class CsvImportService {
                 errors.isEmpty()
                         ? "資産推移CSVを取り込みました（新規" + importedCount + "件、更新" + updatedCount + "件）"
                         : String.join("; ", errors));
-        return new CsvImportResult(errors.isEmpty(), importedCount, 0, updatedCount, errors);
+        return new CsvImportResult(errors.isEmpty(), importedCount, updatedCount, 0, 0, errors);
     }
 
     private boolean existsAssetSnapshot(Long userId, LocalDate snapshotDate) {
@@ -497,14 +497,21 @@ public class CsvImportService {
     public static class CsvImportResult {
         private final boolean success;
         private final int importedCount;
+        private final int updatedCount;
         private final int skippedDuplicateCount;
         private final int skippedExcludedCount;
         private final List<String> errorMessages;
 
         public CsvImportResult(boolean success, int importedCount, int skippedDuplicateCount,
                 int skippedExcludedCount, List<String> errorMessages) {
+            this(success, importedCount, 0, skippedDuplicateCount, skippedExcludedCount, errorMessages);
+        }
+
+        public CsvImportResult(boolean success, int importedCount, int updatedCount, int skippedDuplicateCount,
+                int skippedExcludedCount, List<String> errorMessages) {
             this.success = success;
             this.importedCount = importedCount;
+            this.updatedCount = updatedCount;
             this.skippedDuplicateCount = skippedDuplicateCount;
             this.skippedExcludedCount = skippedExcludedCount;
             this.errorMessages = errorMessages == null ? List.of() : List.copyOf(errorMessages);
@@ -516,6 +523,10 @@ public class CsvImportService {
 
         public int getImportedCount() {
             return importedCount;
+        }
+
+        public int getUpdatedCount() {
+            return updatedCount;
         }
 
         public int getSkippedDuplicateCount() {

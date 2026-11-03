@@ -104,6 +104,7 @@ public class CsvImportController {
                     "message", "CSVを取り込みました。",
                     "type", validation.getType(),
                     "importedCount", result.getImportedCount(),
+                    "updatedCount", result.getUpdatedCount(),
                     "skippedDuplicateCount", result.getSkippedDuplicateCount(),
                     "skippedExcludedCount", result.getSkippedExcludedCount()));
 

@@ -1,4 +1,7 @@
 HELP.md
+frontend/node_modules/
+frontend/dist/
+src/main/resources/static/miniapp/
 target/
 application-local.properties
 .mvn/wrapper/maven-wrapper.jar

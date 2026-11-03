@@ -1,6 +1,7 @@
 INSERT INTO users (id, name, email) VALUES
 (1, '田中 太郎', 'tanaka@example.com'),
 (2, '田中 次郎', 'tanaka2@example.com');
+ALTER TABLE users ALTER COLUMN id RESTART WITH 3;
 
 INSERT INTO categories (id, user_id, name, type) VALUES
 (1, 1, '給与', 'income'),
@@ -10,11 +11,13 @@ INSERT INTO categories (id, user_id, name, type) VALUES
 (5, 1, '水道光熱費', 'expense'),
 (6, 2, '給与', 'income'),
 (7, 2, '外食', 'expense');
+ALTER TABLE categories ALTER COLUMN id RESTART WITH 8;
 
 INSERT INTO accounts (id, user_id, name, type) VALUES
 (1, 1, 'みずほ銀行', '銀行口座'),
 (2, 1, '現金', '現金'),
 (3, 2, '現金', '現金');
+ALTER TABLE accounts ALTER COLUMN id RESTART WITH 4;
 
 INSERT INTO transactions (transaction_date, amount, type, memo, user_id, category_id, account_id) VALUES
 ('2024-01-01', 250000, 'income', '1月給与', 1, 1, 1),

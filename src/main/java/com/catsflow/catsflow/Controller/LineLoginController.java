@@ -28,6 +28,11 @@ public class LineLoginController {
         return "line-login";
     }
 
+    @GetMapping({ "/miniapp", "/miniapp/" })
+    public String miniAppPage() {
+        return "forward:/miniapp/index.html";
+    }
+
     @GetMapping("/api/line/config")
     @ResponseBody
     public Map<String, String> config() {
