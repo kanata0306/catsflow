@@ -136,7 +136,8 @@ class CsvImportServiceTest {
 
         assertThat(result2.isSuccess()).isTrue();
         assertThat(result2.getImportedCount()).isEqualTo(0);
-        assertThat(result2.getSkippedExcludedCount()).isEqualTo(1);
+        assertThat(result2.getUpdatedCount()).isEqualTo(1);
+        assertThat(result2.getSkippedExcludedCount()).isZero();
     }
 
     @Test

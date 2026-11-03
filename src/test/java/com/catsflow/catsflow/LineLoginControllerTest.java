@@ -34,6 +34,11 @@ class LineLoginControllerTest {
     }
 
     @Test
+    void miniAppPageForwardsToBuiltReactApp() {
+        assertThat(controller.miniAppPage()).isEqualTo("forward:/miniapp/index.html");
+    }
+
+    @Test
     void configReturnsConfiguredLiffId() {
         ReflectionTestUtils.setField(controller, "liffId", "1234567890-abcdefgh");
 

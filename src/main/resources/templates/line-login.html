@@ -94,8 +94,9 @@
             const result = await response.json();
             if (!response.ok) throw new Error(result.message || "認証できませんでした。");
             form.classList.add("hidden");
-            intro.textContent = "連携できました。LINEのトークへ戻って『今月』と送ってください。";
+            intro.textContent = "連携できました。Mini Appを開きます。";
             status.textContent = result.message;
+            window.location.assign("/miniapp/");
         } catch (error) {
             status.textContent = error.message;
         } finally {

@@ -134,6 +134,10 @@ public class LineWebhookController {
         Long userId = linkedUser.get().getUserId();
         String normalized = text == null ? "" : text.trim();
 
+        if ("アプリ".equals(normalized) || "開く".equals(normalized)) {
+            return miniAppLinkMessage();
+        }
+
         if ("今月".equals(normalized)) {
             var summary = transactionSummaryService.getMonthlySummary(userId);
             return "今月の収入: " + formatMoney(summary.getIncome())
@@ -172,7 +176,15 @@ public class LineWebhookController {
                     + "\n使用率: " + budgetStatus.usageRate() + "%";
         }
 
-        return "利用可能なコマンドは\n今月\n予算\nカテゴリ別\nです。";
+        return "Mini Appを開くには「アプリ」と送ってください。\n"
+                + "利用可能なコマンドは\n今月\n予算\nカテゴリ別\nです。";
+    }
+
+    private String miniAppLinkMessage() {
+        if (liffId == null || liffId.isBlank()) {
+            return "Mini Appのリンクが設定されていません。管理者に連絡してください。";
+        }
+        return "Catsflow Mini Appを開く: https://liff.line.me/" + liffId;
     }
 
     private void sendReply(String replyToken, String text) {
