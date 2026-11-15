@@ -5,6 +5,8 @@ import com.catsflow.catsflow.Repository.UserRepository;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Optional;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,17 +19,26 @@ public class LineAccountService {
     private final LineIdTokenVerifier lineIdTokenVerifier;
     private final LineUserLinkService lineUserLinkService;
     private final JdbcTemplate jdbcTemplate;
+    private final ObjectProvider<DevPlanningSeedService> devPlanningSeedService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    @Autowired
     public LineAccountService(
             UserRepository userRepository,
             LineIdTokenVerifier lineIdTokenVerifier,
             LineUserLinkService lineUserLinkService,
-            JdbcTemplate jdbcTemplate) {
+            JdbcTemplate jdbcTemplate,
+            ObjectProvider<DevPlanningSeedService> devPlanningSeedService) {
         this.userRepository = userRepository;
         this.lineIdTokenVerifier = lineIdTokenVerifier;
         this.lineUserLinkService = lineUserLinkService;
         this.jdbcTemplate = jdbcTemplate;
+        this.devPlanningSeedService = devPlanningSeedService;
+    }
+
+    public LineAccountService(UserRepository userRepository, LineIdTokenVerifier lineIdTokenVerifier,
+            LineUserLinkService lineUserLinkService, JdbcTemplate jdbcTemplate) {
+        this(userRepository, lineIdTokenVerifier, lineUserLinkService, jdbcTemplate, null);
     }
 
     @Transactional
@@ -71,6 +82,9 @@ public class LineAccountService {
             jdbcTemplate.update(
                     "INSERT INTO accounts (user_id, name, type) VALUES (?, ?, ?)",
                     user.getId(), "現金", "現金");
+            if (devPlanningSeedService != null) {
+                devPlanningSeedService.ifAvailable(seeder -> seeder.seedForNewUser(user.getId()));
+            }
         }
 
         lineUserLinkService.linkUser(user.getId(), lineUserId);

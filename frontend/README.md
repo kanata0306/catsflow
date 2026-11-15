@@ -2,6 +2,8 @@
 
 React + TypeScript frontend for the LINE Mini App. Spring Boot remains the API and production host.
 
+The visible app version comes from `package.json`. Bump the patch version for every user-facing update (for example `0.2.0` to `0.2.1`) and keep `package-lock.json` in sync.
+
 ## Requirements
 
 - Node.js 20.19 or newer
@@ -46,9 +48,15 @@ For UI-only review without LINE authentication, open `http://localhost:5173/?pre
 
 ## LINE App
 
-The phone cannot reach a PC's `localhost`. Expose the Vite port through an HTTPS development tunnel, then set the LIFF endpoint URL to the tunnel URL's root (for example, `https://<tunnel-host>/`) while using Vite. Keep both Spring Boot and Vite running; Vite forwards API calls to the local backend. Do not use a temporary tunnel as a production endpoint.
+The phone cannot reach a PC's `localhost`. Expose either Vite (`5173`) or Spring Boot (`8080`) through an HTTPS development tunnel and set the LIFF endpoint URL to that tunnel's HTTPS URL. With Vite, the root serves the frontend directly and proxies API calls to Spring Boot. With Spring Boot, `/` internally forwards to the built frontend while preserving the browser URL and LIFF state parameters. Keep the corresponding tunnel target running; do not use a temporary tunnel as a production endpoint.
 
 For a packaged deployment, build the frontend and set the LIFF endpoint URL to the deployed HTTPS address ending in `/miniapp/`.
+
+## Planning Form Test Data
+
+The default `dev` profile loads demo rows for the seeded sample accounts and adds clearly labeled sample profile, long-term liability, goals, and life events when a new development account registers. These rows can be edited or deleted from the Goals screen. They are test data, not personal financial records.
+
+Before a public deployment, activate the `prod` Spring profile (for example, set `SPRING_PROFILES_ACTIVE=prod`). That profile switches SQL initialization to an empty seed script and disables the new-user planning sample seeder. Do not copy the development H2 database into production.
 
 ## Official Account Rich Menu
 

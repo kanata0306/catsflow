@@ -163,3 +163,84 @@ CREATE TABLE IF NOT EXISTS budgets (
 
     UNIQUE (user_id, category_id, year_month)       -- 同一ユーザー・カテゴリ・年月は1件のみ
 );
+
+-- ==========================================
+-- Financial profile
+-- 初期入力する生活状況
+-- ==========================================
+CREATE TABLE IF NOT EXISTS financial_profiles (
+    user_id BIGINT PRIMARY KEY,
+    housing_type VARCHAR(30),
+    monthly_living_cost DECIMAL(15,2),
+    income_stability VARCHAR(30),
+    monthly_family_support DECIMAL(15,2),
+    priorities VARCHAR(1000),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- ==========================================
+-- Long-term liabilities
+-- 長期負債。カード残高等の短期債務は登録対象外
+-- ==========================================
+CREATE TABLE IF NOT EXISTS long_term_liabilities (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    liability_type VARCHAR(30) NOT NULL,
+    balance DECIMAL(15,2) NOT NULL,
+    as_of_date DATE NOT NULL,
+    annual_interest_rate DECIMAL(7,4),
+    monthly_payment DECIMAL(15,2),
+    payment_day SMALLINT,
+    note VARCHAR(1000),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_long_term_liabilities_user_date
+    ON long_term_liabilities (user_id, as_of_date);
+
+-- ==========================================
+-- Financial goals
+-- 貯金・資産形成目標
+-- ==========================================
+CREATE TABLE IF NOT EXISTS financial_goals (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    goal_type VARCHAR(30) NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    target_amount DECIMAL(15,2) NOT NULL,
+    current_amount DECIMAL(15,2) NOT NULL DEFAULT 0,
+    target_month CHAR(7),
+    monthly_contribution DECIMAL(15,2),
+    status VARCHAR(20) NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_financial_goals_user_status
+    ON financial_goals (user_id, status);
+
+-- ==========================================
+-- Life plan events
+-- User-entered facts are stored separately from assumptions
+-- ==========================================
+CREATE TABLE IF NOT EXISTS life_plan_events (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    title VARCHAR(120) NOT NULL,
+    category VARCHAR(30) NOT NULL,
+    event_month CHAR(7) NOT NULL,
+    estimated_amount DECIMAL(15,2),
+    entry_type VARCHAR(20) NOT NULL DEFAULT 'fact',
+    note VARCHAR(1000),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_life_plan_events_user_month
+    ON life_plan_events (user_id, event_month);

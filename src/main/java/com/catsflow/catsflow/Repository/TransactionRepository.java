@@ -24,9 +24,14 @@ public class TransactionRepository {
     }
 
     public List<Map<String, Object>> findThisMonthByUserId(Long userId) {
-        YearMonth currentMonth = YearMonth.now();
-        LocalDate startDate = currentMonth.atDay(1);
-        LocalDate endDate = currentMonth.atEndOfMonth();
+        return findByUserIdAndMonth(userId, YearMonth.now());
+    }
+
+    public List<Map<String, Object>> findByUserIdAndMonth(Long userId, YearMonth month) {
+        return findByUserIdBetweenDates(userId, month.atDay(1), month.atEndOfMonth());
+    }
+
+    public List<Map<String, Object>> findByUserIdBetweenDates(Long userId, LocalDate startDate, LocalDate endDate) {
 
         String query = "SELECT t.*, c.name AS category_name "
                 + "FROM transactions t "

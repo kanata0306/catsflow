@@ -1,0 +1,1 @@
+-- No demo rows. The dev profile explicitly loads data.sql instead.

@@ -23,6 +23,11 @@ public class LineLoginController {
         this.lineAccountService = lineAccountService;
     }
 
+    @GetMapping("/")
+    public String appRoot() {
+        return "forward:/miniapp/index.html";
+    }
+
     @GetMapping("/line/login")
     public String loginPage() {
         return "line-login";

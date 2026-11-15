@@ -29,6 +29,11 @@ class LineLoginControllerTest {
     private LineLoginController controller;
 
     @Test
+    void appRootRedirectsToMiniApp() {
+        assertThat(controller.appRoot()).isEqualTo("forward:/miniapp/index.html");
+    }
+
+    @Test
     void loginPageReturnsLineLoginView() {
         assertThat(controller.loginPage()).isEqualTo("line-login");
     }
